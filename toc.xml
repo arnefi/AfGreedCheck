@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Addon Author="arnefi" APIVersion="9" Name="AfGreedCheck" Description="Displays a window where you can see at a glance who pressed need or greed or who won the loot item." Version="alpha">
+    <Script Name="AfGreedCheck.lua"/>
+    <Form Name="AfGreedCheck.xml"/>
+</Addon>
