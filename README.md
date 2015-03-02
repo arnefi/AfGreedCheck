@@ -14,6 +14,6 @@ After installation you can configure it by typing `/afraid` in any chat window o
 
 ![Configuration Window](http://fs1.directupload.net/images/150128/v4rpjwp3.jpg)
 
-Link to curse will follow.
+[Addon on Curse](http://curse.com/project/227351)
 
 ![afGreedCheck DVD Case](http://fs1.directupload.net/images/150128/ccqrhel4.png)

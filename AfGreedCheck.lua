@@ -72,6 +72,7 @@ function AfGreedCheck:new(o)
 	o.Settings = { -- set default values
 		delay = 30,
 		quality = 1,
+		tooltips = false,
 	}
 	o.suppress = false
 	--o.alpha = 112
@@ -129,7 +130,7 @@ function AfGreedCheck:OnDocLoaded()
 		
 		Apollo.RegisterEventHandler("Group_Add",        "GroupChange",        self)
 		Apollo.RegisterEventHandler("Group_Left",       "GroupChange",        self)
-		Apollo.RegisterEventHandler("Group_Update",     "GroupChange",        self)
+		Apollo.RegisterEventHandler("Group_Updated",    "GroupChange",        self)
 		Apollo.RegisterEventHandler("Group_Join",       "GroupChange",        self)
 		Apollo.RegisterEventHandler("Group_Remove",     "GroupChange",        self)
 		
@@ -161,6 +162,7 @@ function AfGreedCheck:OnRestore(eType, tSavedData)
 			-- replacing single values to not overwrite new default values by not existing values
 			if tSavedData.Settings.delay ~= nil then self.Settings.delay = tSavedData.Settings.delay end
 			if tSavedData.Settings.quality ~= nil then self.Settings.quality = tSavedData.Settings.quality end
+			if tSavedData.Settings.tooltips ~= nil then self.Settings.tooltips = tSavedData.Settings.tooltips end
 		end
 	end
 end
@@ -281,6 +283,7 @@ function AfGreedCheck:LoadConfig()
 	wndSlider = self.wndConfig:FindChild("QualitySlider"):FindChild("SliderBar")
 	wndSlider:SetValue(self.Settings.quality)
 	self:OnChangeItemQuality(wndSlider, wndSlider, self.Settings.quality, 0)
+	self.wndConfig:FindChild("btn_tooltips"):SetCheck(self.Settings.tooltips)
 end
 
 
@@ -297,6 +300,16 @@ function AfGreedCheck:OnTimer()
 	end
 	if bRemoved then
 		self:RefreshLoot()
+	end
+end
+
+
+function AfGreedCheck:BindTooltip(uItem, wndHandler)
+	local itemEquipped = uItem:GetEquippedItemForItemType()
+	if itemEquipped then
+		Tooltip.GetItemTooltipForm(self, wndHandler, uItem, {bPrimary = true, bSelling = false, bNotEquipped = true, itemCompare = itemEquipped})
+	else
+		Tooltip.GetItemTooltipForm(self, wndHandler, uItem, {bPrimary = true, bSelling = false, bNotEquipped = true})
 	end
 end
 
@@ -441,7 +454,11 @@ function AfGreedCheck:AddLoot(uItem)
 	--wndEntry:FindChild("ItemType"):SetTextColor(ktEvalColors[iQuality])
 	wndEntry:FindChild("ItemIcon"):SetSprite(uItem:GetIcon())
 	wndEntry:FindChild("Quality"):SetSprite(ktEvalQualities[iQuality])
-
+	
+	if self.Settings.tooltips then
+		self:BindTooltip(uItem, wndEntry:FindChild("ItemFrame"))
+	end
+	
 	local wndChoices = wndEntry:FindChild("Choices")
 	local tGroupChoices = {}
 	local tGroupPossible = {}
@@ -566,6 +583,10 @@ function AfGreedCheck:OnConfigOK(wndHandler, wndControl, eMouseButton)
 	self.wndConfig:Close()
 end
 
+
+function AfGreedCheck:ToggleTip(wndHandler, wndControl, eMouseButton)
+	self.Settings.tooltips = wndHandler:IsChecked()
+end
 
 -----------------------------------------------------------------------------------------------
 -- AfGreedCheck Instance
